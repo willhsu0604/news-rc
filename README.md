@@ -15,8 +15,10 @@ $ git clone https://github.com/willhsu0604/news-rc.git
 $ git clone https://github.com/willhsu0604/news-rc.git
 ```
 
-4.  Run test/scala/idv/will/HBaseServer.scala
+4.  Run build.sbt
 
-5.  Run main/scala/idv/will/NewsCrawlerExecutor.scala
+5.  Run test/scala/idv/will/HBaseServer.scala
 
-6.  Run main/scala/idv/will/NewsRecommender.scala
+6.  Run main/scala/idv/will/NewsCrawlerExecutor.scala
+
+7.  Run main/scala/idv/will/NewsRecommender.scala
