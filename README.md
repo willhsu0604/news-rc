@@ -12,7 +12,7 @@ $ git clone https://github.com/willhsu0604/news-rc.git
 3.  Start Docker-Elasticsearch
 
 ```sh
-$ git clone https://github.com/willhsu0604/news-rc.git
+$ ./sbin/start-docker-elasticsearch.sh
 ```
 
 4.  Run build.sbt
