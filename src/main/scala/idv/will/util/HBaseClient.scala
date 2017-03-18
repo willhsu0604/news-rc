@@ -1,7 +1,6 @@
-package idv.will
+package idv.will.util
 
 import idv.will.annotation.HTableProfile
-import idv.will.util.JsonUtils
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.hbase._
@@ -22,6 +21,7 @@ object HBaseClient {
   private var tablePool: HashMap[String, Table] = HashMap[String, Table]()
 
   var conf: Configuration = null
+  var initialized = false
 
   @HTableProfile(partitionsPrefix = "0123456789")
   val TABLE_NEWS = "news"
@@ -97,6 +97,10 @@ object HBaseClient {
   }
 
   def getValue[T](table: String, row: String, family: Array[Byte], qualifier: Array[Byte])(implicit m: Manifest[T]) = {
+    if(!initialized) {
+      setup()
+      initialized = true
+    }
     val get = new Get(Bytes.toBytes(getPartitionedRowKey(table,row)))
     get.addColumn(family, qualifier)
     val result = getHTable(table).get(get)
@@ -105,6 +109,10 @@ object HBaseClient {
   }
 
   def bulkLoad(path: String, tableName: String) {
+    if(!initialized) {
+      setup()
+      initialized = true
+    }
     val inputPath = new Path(path)
     val loader: LoadIncrementalHFiles = new LoadIncrementalHFiles(getHBaseConnection.getConfiguration)
     loader.doBulkLoad(inputPath, new HTable(conf, tableName))
@@ -127,6 +135,10 @@ object HBaseClient {
   }
 
   def writeToHBase(tableName: String, family: Array[Byte], qualifier: Array[Byte], data: Map[String, Any], fullyUpdate:Boolean): Unit = {
+    if(!initialized) {
+      setup()
+      initialized = true
+    }
     val table: Table = HBaseClient.getHTable(tableName)
     data.par.foreach(data => {
       val (rowKey, value) = (data._1, data._2)

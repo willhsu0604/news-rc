@@ -1,9 +1,9 @@
 package idv.will
 
 import idv.will.model.KeywordBean
-import idv.will.util.{HBaseNewsHelper, HBaseWordBaseHelper, NewsLoader, StringSeqUtils}
+import idv.will.util._
 import org.slf4j.LoggerFactory
-import idv.will.HBaseClient._
+import idv.will.util.HBaseClient._
 
 import scala.collection.mutable
 
@@ -14,7 +14,6 @@ object NewsCrawlerExecutor {
   val KEYWORDS_NUM = 100
 
   def main(args: Array[String]): Unit = {
-    HBaseClient.setup()
     var minusDaysOffset = 30
     while(minusDaysOffset >= 0) {
       val map = mutable.Map[String, KeywordBean]()

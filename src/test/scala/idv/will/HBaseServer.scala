@@ -2,6 +2,7 @@ package idv.will
 
 import java.util.Properties
 
+import idv.will.util.HBaseClient
 import org.apache.hadoop.hbase.LocalHBaseCluster
 import org.apache.zookeeper.server.{ServerConfig, ZooKeeperServerMain}
 import org.apache.zookeeper.server.quorum.QuorumPeerConfig

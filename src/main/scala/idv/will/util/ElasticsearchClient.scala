@@ -1,4 +1,4 @@
-package idv.will
+package idv.will.util
 
 import java.net.{InetAddress, UnknownHostException}
 
@@ -9,17 +9,16 @@ import org.elasticsearch.client.Client
 import org.elasticsearch.common.settings.Settings
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.elasticsearch.common.xcontent.XContentBuilder
-import org.slf4j.LoggerFactory
-import org.elasticsearch.common.xcontent.XContentFactory.{jsonBuilder, _}
+import org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.aggregations.AggregationBuilders
-import org.elasticsearch.search.aggregations.bucket.filter.Filter
 import org.elasticsearch.search.aggregations.bucket.terms.Terms
 import org.elasticsearch.search.aggregations.metrics.sum.Sum
 import org.elasticsearch.transport.client.PreBuiltTransportClient
+import org.slf4j.LoggerFactory
 
+import scala.collection.JavaConversions._
 import scala.collection.mutable
-import collection.JavaConversions._
 
 object ElasticsearchClient {
 
@@ -33,6 +32,8 @@ object ElasticsearchClient {
   val TYPE_NEWS = "news"
   val TYPE_KEYWORD = "keyword"
 
+  private var isIndexCreated = false
+
   private var client: Option[Client] = null
 
   private def getClientInstance(): Client = {
@@ -40,9 +41,44 @@ object ElasticsearchClient {
       client = getClient(this.host, this.port)
     }
     if(client.isDefined) {
+      if(!isIndexCreated) {
+        createIndex(client.get)
+        isIndexCreated = true
+      }
       client.get
     } else {
       throw new RuntimeException("Uable to connect to ElasticsearchClient with host: [" + this.host +"] and port: [" + this.port + "]")
+    }
+  }
+
+  private def createIndex(client: Client): Unit = {
+    val exists = client.admin().indices()
+      .prepareExists(INDEX_NEWS_RC)
+      .execute().actionGet().isExists()
+    if(!exists) {
+      client.admin().indices().prepareCreate(INDEX_NEWS_RC)
+        .addMapping(TYPE_KEYWORD, "{\n" +
+          "    \"keyword\": {\n" +
+          "       \"_all\": {\n" +
+          "         \"enabled\": false,\n" +
+          "         \"omit_norms\": true\n" +
+          "       },\n" +
+          "       \"properties\": {\n" +
+          "         \"newsId\": {\n" +
+          "             \"type\": \"string\",\n" +
+          "             \"index\": \"not_analyzed\"\n" +
+          "         },\n" +
+          "         \"keyword\": {\n" +
+          "             \"type\": \"string\",\n" +
+          "             \"index\": \"not_analyzed\"\n" +
+          "         },\n" +
+          "         \"score\": {\n" +
+          "             \"type\": \"float\"\n" +
+          "         }\n" +
+          "       }\n" +
+          "     }\n" +
+          "  }")
+        .get()
     }
   }
 

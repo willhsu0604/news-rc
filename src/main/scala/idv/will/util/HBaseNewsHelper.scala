@@ -3,7 +3,7 @@ package idv.will.util
 import java.util.concurrent.TimeUnit
 
 import com.google.common.cache.{CacheBuilder, CacheLoader}
-import idv.will.HBaseClient._
+import HBaseClient._
 
 object HBaseNewsHelper {
 

@@ -3,7 +3,7 @@ package idv.will.util
 import java.util.concurrent.TimeUnit
 
 import com.google.common.cache.{CacheBuilder, CacheLoader}
-import idv.will.HBaseClient.{DEFAULT_FAMILY, QUALIFIER_WORD_BASE, TABLE_WORD_BASE, getValue}
+import HBaseClient.{DEFAULT_FAMILY, QUALIFIER_WORD_BASE, TABLE_WORD_BASE, getValue}
 
 
 object HBaseWordBaseHelper {
